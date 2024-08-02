@@ -8,12 +8,11 @@ from rest_framework import status
 from rest_framework.authentication import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework import viewsets
-
+from rest_framework import viewsets, mixins
 
 from tdc_api.authentication import CustomJWTAuthentication
-from tdc_api.models import Material, Patient, ServiceType, Services
-from tdc_api.serializers import CreateServiceTypeSerializer, CreateServicesSerializer, CreateUserSerializer, GetServiceTypeSerializer, GetServicesSerializer, MaterialSerializer, PatientSerializer, ServiceSerializer, ServiceTypeSerializer, UserLoginSerializer, UserSerializer
-
+from tdc_api.models import AssignPatientToDoctor, Patient, ServiceType, Services
+from tdc_api.serializers import AssignPatientToDoctorCreateUpdateSerializer, AssignPatientToDoctorSerializer, CreateUserSerializer, PatientSerializer, ServiceSerializer, ServiceTypeSerializer, UserLoginSerializer, UserSerializer
 
 # Create your views here.
 @api_view(['GET'])
@@ -43,7 +42,13 @@ def index(request):
                      "To Get Patient List":"http://192.168.0.111:8000/api/patient",
                      "To Get Patient By ID":"http://192.168.0.111:8000/api/patient/id",
                      "To Create Patient":"http://192.168.0.111:8000/api/patient/",
-                     "To Soft Delete Patient. archiveReason, deletedBy, updatedBy value send from form" :"http://192.168.0.111:8000/api/patient/id/"
+                     "To update Patient":"http://192.168.0.111:8000/api/patient/id/",
+                    #  "To Soft Delete Patient. archiveReason, deletedBy, updatedBy value send from form" :"http://192.168.0.111:8000/api/patient/id/"
+  
+                     "To Get Patients Assigned to Doctor List":"http://192.168.0.111:8000/api/assign/patient-to-doctor",
+                     "To Get Patients Assigned to Doctor By ID":"http://192.168.0.111:8000/api/assign/patient-to-doctor/id",
+                     "To Assigned Patients to Doctor":"http://192.168.0.111:8000/api/assign/patient-to-doctor/",
+                     "To update Patient":"http://192.168.0.111:8000/api/assign/patient-to-doctor/id/",
                      })
 
 
@@ -71,7 +76,6 @@ class GetUserByIdView(APIView):
     except Exception as e:
       return Response({"success": False, "error": str(e)}, status=500)
     
-
 class RegisterUserView(APIView):
   # authentication_classes = [CustomJWTAuthentication]
   def post(self, request, format=None):
@@ -192,63 +196,61 @@ class ServiceTypeViewSet(viewsets.ViewSet):
     serviceTypeData.delete()
     return Response({'success':'Deleted Successfully'}, status=status.HTTP_204_NO_CONTENT)
   
-class MaterialViewSet(viewsets.ModelViewSet):
-    queryset = Material.objects.all()
-    serializer_class = MaterialSerializer
-    # authentication_classes = [CustomJWTAuthentication]
+class PatientViewSet(viewsets.GenericViewSet,
+                     mixins.ListModelMixin,
+                     mixins.CreateModelMixin,
+                     mixins.RetrieveModelMixin,
+                     mixins.UpdateModelMixin):
+    queryset = Patient.objects.all()
+    serializer_class = PatientSerializer
 
-    def destroy(self, request, *args, **kwargs):
-       data = request.data
-       
-       # Assuming 'id' is a field in the request body to identify which instance to delete
-      #  instance_id = data.get('id')
-       deletedInstance = self.get_object()
-       instance_id = deletedInstance.id
-       user_id = data.get('deletedBy')
-       user_instance = get_object_or_404(User, id=user_id)
-        
-       if instance_id is None:
-            return Response({"detail": "ID is required to delete."}, status=status.HTTP_400_BAD_REQUEST)
-       try:
-          # Retrieve the instance to be deleted
-          instance = self.get_queryset().get(id=instance_id)
-          instance.deletedAt = timezone.now()
-          instance.deletedBy = user_instance
-          instance.archiveReason = data.get('archiveReason')
-          instance.updatedBy = data.get('updatedBy')
-          instance.save()
-          return Response({'message': 'Material successfully deleted'}, status=status.HTTP_204_NO_CONTENT)
-       except Material.DoesNotExist:
-            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        # Prepare the custom response
+        response_data = {
+            "count": len(serializer.data),
+            "data": serializer.data
+        }
+        return Response(response_data)
+    
+    def update(self, request, *args, **kwargs):
+        # Partially update an existing object.
+        partial = kwargs.pop('partial', False)  # Check if this is a partial update
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+class AssignPatientToDoctorViewSet(viewsets.GenericViewSet,
+                     mixins.ListModelMixin,
+                     mixins.CreateModelMixin,
+                     mixins.RetrieveModelMixin,
+                     mixins.UpdateModelMixin):
+    queryset = AssignPatientToDoctor.objects.all()
+    def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return AssignPatientToDoctorSerializer
+        return AssignPatientToDoctorCreateUpdateSerializer
 
-    # def perform_destroy(self, instance):
-    #     instance.delete()
-
-class patientViewSet(viewsets.ModelViewSet):
-
-  queryset = Patient.objects.all()
-  serializer_class = PatientSerializer
-    # authentication_classes = [CustomJWTAuthentication]
-
-  def destroy(self, request, *args, **kwargs):
-    data = request.data
-    # Assuming 'id' is a field in the request body to identify which instance to delete
-    #  instance_id = data.get('id')
-    deletedInstance = self.get_object()
-    instance_id = deletedInstance.id
-    user_id = data.get('deletedBy')
-    user_instance = get_object_or_404(User, id=user_id)
-        
-    if instance_id is None:
-      return Response({"detail": "ID is required to delete."}, status=status.HTTP_400_BAD_REQUEST)
-    try:
-          # Retrieve the instance to be deleted
-          instance = self.get_queryset().get(id=instance_id)
-          instance.deletedAt = timezone.now()
-          instance.deletedBy = user_instance
-          instance.archiveReason = data.get('archiveReason')
-          instance.updatedBy = data.get('updatedBy')
-          instance.save()
-          return Response({'message': 'Patient successfully deleted'}, status=status.HTTP_204_NO_CONTENT)
-    except Patient.DoesNotExist:
-            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+    def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        # Prepare the custom response
+        response_data = {
+            "count": len(serializer.data),
+            "data": serializer.data
+        }
+        return Response(response_data)
+    
+    def update(self, request, *args, **kwargs):
+        # Partially update an existing object.
+        partial = kwargs.pop('partial', False)  # Check if this is a partial update
+        instance = self.get_object()
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

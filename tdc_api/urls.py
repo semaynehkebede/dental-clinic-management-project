@@ -7,8 +7,9 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'service-type', views.ServiceTypeViewSet, basename='sertype')
 router.register(r'service', views.ServiceViewSet, basename='service')
-router.register(r'materials', views.MaterialViewSet, basename='material')
-router.register(r'patient', views.patientViewSet, basename='patient')
+# router.register(r'materials', views.MaterialViewSet, basename='material')
+router.register(r'patient', views.PatientViewSet, basename='patient')
+router.register(r'assign/patient-to-doctor', views.AssignPatientToDoctorViewSet, basename='patient_to_doctor')
 
 urlpatterns = [
     path('', views.index),

@@ -13,65 +13,49 @@ class Services(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=10)
     # discountPrice = models.DecimalField(decimal_places=2, max_digits=10)
 
-
-class Material(models.Model):
-    MATERIAL_TYPE = [
-        ('consumable', 'Consumable'),
-        ('equipment', 'Equipment'),
-        ('furnishing', 'Furnishing'),
-        ('other', 'other'),
-    ]
-
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True, null=True)
-    quantity = models.PositiveIntegerField()
-    avilableQuantity = models.PositiveIntegerField()
-    material_type = models.CharField(max_length=50, choices=MATERIAL_TYPE)
-    supplier = models.CharField(max_length=255)
-    expiration_date = models.DateField(blank=True, null=True)
-    isActive = models.BooleanField(default=True)
-    createdBy = models.ForeignKey(User, on_delete=models.CASCADE,related_name='materialCreatedBy')
-    updatedBy = models.ForeignKey(User, on_delete=models.CASCADE, related_name='materialUpdatedBy', null=True)
-    archiveReason = models.CharField(max_length=255, null=True)
-  # auto_now_add=True(meanse the value not changed when we update the data)
-    createdAt=models.DateTimeField(auto_now_add=True)
-    updatedAt = models.DateTimeField(auto_now=True)
-  # auto_now=True(meanse the value updated when we update the data)
-    deletedBy = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='materialDeletedBy')
-    deletedAt = models.DateTimeField(null=True, blank=True, default=None)
-
-    def __str__(self):
-        return self.name
-    
-
 class Patient(models.Model):
     GENDER_TYPE = [
         ('female', 'female'),
         ('male', 'male'),
     ]
     pID = models.CharField(max_length=30)
-    firstName = models.CharField(max_length=20)
-    middleName = models.CharField(max_length=20)
-    lastName = models.CharField(max_length=20)
+    first_name = models.CharField(max_length=20)
+    middle_name = models.CharField(max_length=20)
+    last_name = models.CharField(max_length=20)
     dob = models.DateField()
     gender = models.CharField(max_length=50, choices=GENDER_TYPE)
-    preferredLanguage = models.CharField(max_length=70)
+    preferred_language = models.CharField(max_length=70)
     occupation = models.CharField(max_length=30, null=True)
     address = models.CharField(max_length=255)
-    phoneNumber = models.CharField(max_length=30)
+    phone_number = models.CharField(max_length=30)
     email = models.CharField(max_length=40, null=True)
-    previousMedicalCondition = models.CharField(max_length=255, null=True)
-    emergencyContact = models.CharField(max_length=40, null=True)
-    sergicalHistory = models.CharField(max_length=255, null=True)
-    createdBy = models.ForeignKey(User, on_delete=models.CASCADE,related_name='patientCreatedBy')
-    updatedBy = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patientUpdatedBy', null=True)
-    archiveReason = models.CharField(max_length=255, null=True)
-  # auto_now_add=True(meanse the value not changed when we update the data)
-    createdAt=models.DateTimeField(auto_now_add=True)
-    updatedAt = models.DateTimeField(auto_now=True)
-  # auto_now=True(meanse the value updated when we update the data)
-    deletedBy = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='patientDeletedBy')
-    deletedAt = models.DateTimeField(null=True, blank=True, default=None)
+    previous_medical_condition = models.CharField(max_length=255, null=True)
+    emergency_contact = models.CharField(max_length=40, null=True)
+    sergical_history = models.CharField(max_length=255, null=True)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE,related_name='patient_creater')
+    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patient_updater', null=True)
+    archive_reason = models.CharField(max_length=255, null=True)
+    created_at=models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='patient_delete')
+    deleted_at = models.DateTimeField(null=True, blank=True, default=None)
 
     def __str__(self):
-        return self.pID
+        return f"{self.firstName} {self.middleName}. ID:- {self.appointment_date}"
+
+class AssignPatientToDoctor(models.Model):
+    service = models.ForeignKey(ServiceType, on_delete=models.CASCADE, related_name='assign_service')
+    patient = models.ForeignKey(Patient, on_delete = models.CASCADE, related_name='patient_assign' )
+    doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='doctor_assign')
+    detail_description =  models.TextField(max_length=100, null=True)
+    assigned_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='patient_assigner')
+    updated_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assign_update', null=True)
+    archive_reason = models.CharField(max_length=255, null=True)
+    assigned_at=models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='assign_delete')
+    deleted_at = models.DateTimeField(null=True, blank=True, default=None)
+
+    def __str__(self):
+      return f"Assign {self.patient} to {self.doctor}"
+    
