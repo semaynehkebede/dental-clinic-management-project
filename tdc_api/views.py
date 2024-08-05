@@ -11,8 +11,8 @@ from rest_framework import viewsets
 from rest_framework import viewsets, mixins
 
 from tdc_api.authentication import CustomJWTAuthentication
-from tdc_api.models import AssignPatientToDoctor, Patient, ServiceType, Services
-from tdc_api.serializers import AssignPatientToDoctorCreateUpdateSerializer, AssignPatientToDoctorSerializer, CreateUserSerializer, PatientSerializer, ServiceSerializer, ServiceTypeSerializer, UserLoginSerializer, UserSerializer
+from tdc_api.models import AssignPatientToDoctor, Patient, Product, ProductStore, ServiceType, Services
+from tdc_api.serializers import AssignPatientToDoctorCreateUpdateSerializer, AssignPatientToDoctorSerializer, CreateUserSerializer, PatientSerializer, ProductSerializer, ProductStoreSerializer, ServiceSerializer, ServiceTypeSerializer, UserLoginSerializer, UserSerializer
 
 # Create your views here.
 @api_view(['GET'])
@@ -254,3 +254,52 @@ class AssignPatientToDoctorViewSet(viewsets.GenericViewSet,
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+   
+class ProductStoreViewSet(viewsets.GenericViewSet,
+                     mixins.ListModelMixin,
+                     mixins.CreateModelMixin,
+                     mixins.RetrieveModelMixin,
+                     mixins.UpdateModelMixin):
+   
+   queryset = ProductStore.objects.all()
+   serializer_class = ProductStoreSerializer
+
+  #  def perform_create(self, serializer):
+  #       serializer.save(created_by=self.request.user)
+
+   def perform_create(self, serializer):
+        # Set the quantity to 0 for new instances
+        serializer.save(quantity=0)
+
+  
+   def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        # Prepare the custom response
+        response_data = {
+            "count": len(serializer.data),
+            "data": serializer.data
+        }
+        return Response(response_data)
+
+class ProductViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin,
+                      mixins.DestroyModelMixin, mixins.ListModelMixin,
+                        mixins.UpdateModelMixin) :
+   
+   queryset = Product.objects.all()
+   serializer_class = ProductSerializer
+
+   def perform_create(self, serializer):
+        # Save the new Product instance
+        instance = serializer.save()
+
+        # Now update the related ProductStore quantity
+        ProductStore = instance.product_name
+
+        # Add new registered quantity to old quantity on the store
+        ProductStore.quantity =  ProductStore.quantity + instance.entry_quantity  
+        ProductStore.save()
+
+        # you can return the instance
+        return instance
