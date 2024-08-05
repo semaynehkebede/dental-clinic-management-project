@@ -1,8 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
+from django.core.validators import MinValueValidator
 
-from tdc_api.models import AssignPatientToDoctor, Patient, ServiceType, Services
+from tdc_api.models import AssignPatientToDoctor, Patient, Product, ProductStore, ServiceType, Services
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -79,3 +80,15 @@ class AssignPatientToDoctorSerializer(serializers.ModelSerializer):
    class Meta:
       model = AssignPatientToDoctor
       fields = '__all__'
+
+class ProductStoreSerializer(serializers.ModelSerializer):
+   quantity = serializers.IntegerField(default = 0, validators=[MinValueValidator(0)])
+   is_active = serializers.BooleanField(default = True)
+   class Meta:
+      model = ProductStore
+      fields = '__all__'   
+
+class ProductSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = Product
+      fields = '__all__'         
