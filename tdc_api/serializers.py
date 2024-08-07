@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 from rest_framework.validators import UniqueValidator
 from django.core.validators import MinValueValidator
 
-from tdc_api.models import AssignPatientToDoctor, Patient, Product, ProductStore, ServiceType, Services
+from tdc_api.models import  Appointment, AssignPatientToDoctor, Billing, Patient, Prescription, Product, ProductStore, ServiceType, Services
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -91,4 +91,47 @@ class ProductStoreSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
    class Meta:
       model = Product
-      fields = '__all__'         
+      fields = '__all__'     
+      
+class AppointmentSerializer(serializers.ModelSerializer):
+   status = serializers.CharField(default = 'Scheduled')
+   patient = PatientSerializer(read_only = True)
+   dentist = UserSerializer(read_only = True)
+   class Meta:
+      model = Appointment
+      fields = '__all__'   
+
+class AppointmentCreateUpdateSerializer(serializers.ModelSerializer):
+   status = serializers.CharField(default = 'Scheduled')
+   class Meta:
+      model = Appointment
+      fields = '__all__'  
+
+class PrescriptionSerializer(serializers.ModelSerializer):
+   patient = PatientSerializer(read_only = True)
+   dentist = UserSerializer(read_only = True)
+   service = ServiceSerializer(read_only =True)
+   product = ProductStoreSerializer(read_only = True)
+   class Meta:
+      model = Prescription
+      fields = '__all__'
+
+class PrescriptionCreateUpdateSerializer(serializers.ModelSerializer):
+   status = serializers.CharField(default = 'Pending')
+   class Meta:
+      model = Prescription
+      fields = '__all__'      
+
+class BillingSerializer(serializers.ModelSerializer):
+   remain_amount = serializers.DecimalField(decimal_places=2, max_digits=10, default = 0.00)
+   status = serializers.CharField(default = 'pending')
+   casher = UserSerializer(read_only = True)
+   prescription = PrescriptionSerializer(read_only = True)
+   class Meta:
+      model = Billing
+      fields = '__all__'
+
+class BillingCreateUpdateSerializer(serializers.ModelSerializer):
+   class Meta:
+      model = Billing
+      fields = '__all__'      
