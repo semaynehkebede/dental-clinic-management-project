@@ -7,10 +7,13 @@ from rest_framework.routers import DefaultRouter
 router = DefaultRouter()
 router.register(r'service-type', views.ServiceTypeViewSet, basename='sertype')
 router.register(r'service', views.ServiceViewSet, basename='service')
-router.register(r'product', views.ProductViewSet, basename='product')
 router.register(r'store-item', views.ProductStoreViewSet, basename='store-item')
+router.register(r'product', views.ProductViewSet, basename='product')
 # router.register(r'materials', views.MaterialViewSet, basename='material')
 router.register(r'patient', views.PatientViewSet, basename='patient')
+router.register(r'appointment', views.AppointmentViewSet, basename='appointment')
+router.register(r'prescription', views.PrescriptionViewSet, basename='prescription')
+router.register(r'billing', views.BillingViewSet, basename='billing')
 router.register(r'assign/patient-to-doctor', views.AssignPatientToDoctorViewSet, basename='patient_to_doctor')
 
 urlpatterns = [

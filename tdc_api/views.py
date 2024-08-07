@@ -11,44 +11,65 @@ from rest_framework import viewsets
 from rest_framework import viewsets, mixins
 
 from tdc_api.authentication import CustomJWTAuthentication
-from tdc_api.models import AssignPatientToDoctor, Patient, Product, ProductStore, ServiceType, Services
-from tdc_api.serializers import AssignPatientToDoctorCreateUpdateSerializer, AssignPatientToDoctorSerializer, CreateUserSerializer, PatientSerializer, ProductSerializer, ProductStoreSerializer, ServiceSerializer, ServiceTypeSerializer, UserLoginSerializer, UserSerializer
+from tdc_api.models import  Appointment, AssignPatientToDoctor, Billing, Patient, Prescription, Product, ProductStore, ServiceType, Services
+from tdc_api.serializers import  AppointmentCreateUpdateSerializer, AppointmentSerializer, AssignPatientToDoctorCreateUpdateSerializer, AssignPatientToDoctorSerializer, BillingSerializer, CreateUserSerializer, PatientSerializer, PrescriptionCreateUpdateSerializer, PrescriptionSerializer, ProductSerializer, ProductStoreSerializer, ServiceSerializer, ServiceTypeSerializer, UserLoginSerializer, UserSerializer
 
 # Create your views here.
 @api_view(['GET'])
 def index(request):
     return Response({"success":"Success Api create", 
-                     "login":"http://192.168.0.111:8000/api/auth/login", 
-                     "refresh-token":"http://192.168.0.111:8000/api/auth/auth/refresh", 
+                     "login":"http://192.168.0.103:8000/api/auth/login", 
+                     "refresh-token":"http://192.168.0.103:8000/api/auth/auth/refresh", 
 
-                     "To Get User":"http://192.168.0.111:8000/api/users/get-users",
-                     "To Get User by id(id sent by form data)":"http://192.168.0.111:8000/api/users/get-user",
-                     "To Create User":"http://192.168.0.111:8000/api/users/create-user",
+                     "To Get User":"http://192.168.0.103:8000/api/users/get-users",
+                     "To Get User by id(id sent by form data)":"http://192.168.0.103:8000/api/users/get-user",
+                     "To Create User":"http://192.168.0.103:8000/api/users/create-user",
 
-                     "To Get Service Type List":"http://192.168.0.111:8000/api/service-type",
-                     "To Get Service Type By ID":"http://192.168.0.111:8000/api/service-type/id",
-                     "To Create Service Type":"http://192.168.0.111:8000/api/service-type/",
-                     "To delete service type" : "192.168.0.111:8000/api/service-type/id/",
+                     "To Get Service Type List":"http://192.168.0.103:8000/api/service-type",
+                     "To Get Service Type By ID":"http://192.168.0.103:8000/api/service-type/id",
+                     "To Create Service Type":"http://192.168.0.103:8000/api/service-type/",
+                     "To delete service type" : "192.168.0.103:8000/api/service-type/id/",
 
-                     "To Get Services List":"http://192.168.0.111:8000/api/service",
-                     "To Get Services By ID":"http://192.168.0.111:8000/api/service/id",
-                     "To Create Service":"http://192.168.0.111:8000/api/service/",
+                     "To Get Services List":"http://192.168.0.103:8000/api/service",
+                     "To Get Services By ID":"http://192.168.0.103:8000/api/service/id",
+                     "To Create Service":"http://192.168.0.103:8000/api/service/",
 
-                     "To Get materials List":"http://192.168.0.111:8000/api/materials",
-                     "To Get materials By ID":"http://192.168.0.111:8000/api/materials/id",
-                     "To Create materials":"http://192.168.0.111:8000/api/materials/",
-                     "To Soft Delete materials. archiveReason, deletedBy, updatedBy value send from form" :"http://192.168.0.111:8000/api/materials/id/",
+                     "To Get store-item List":"http://192.168.0.103:8000/api/store-item",
+                     "To Get store-item By ID":"http://192.168.0.103:8000/api/store-item/id",
+                     "To Create store-item":"http://192.168.0.103:8000/api/store-item/",
+                     "To Soft Delete store-item. archiveReason, deletedBy, updatedBy value send from form" :"http://192.168.0.103:8000/api/store-item/id/",
                      
-                     "To Get Patient List":"http://192.168.0.111:8000/api/patient",
-                     "To Get Patient By ID":"http://192.168.0.111:8000/api/patient/id",
-                     "To Create Patient":"http://192.168.0.111:8000/api/patient/",
-                     "To update Patient":"http://192.168.0.111:8000/api/patient/id/",
-                    #  "To Soft Delete Patient. archiveReason, deletedBy, updatedBy value send from form" :"http://192.168.0.111:8000/api/patient/id/"
+                     "To Get product List":"http://192.168.0.103:8000/api/product",
+                     "To Get product By ID":"http://192.168.0.103:8000/api/product/id",
+                     "To Create product":"http://192.168.0.103:8000/api/product/",
+                     
+                     "To Get Patient List":"http://192.168.0.103:8000/api/patient",
+                     "To Get Patient By ID":"http://192.168.0.103:8000/api/patient/id",
+                     "To Create Patient":"http://192.168.0.103:8000/api/patient/",
+                     "To update Patient":"http://192.168.0.103:8000/api/patient/id/",
+                    #  "To Soft Delete Patient. archiveReason, deletedBy, updatedBy value send from form" :"http://192.168.0.103:8000/api/patient/id/"
   
-                     "To Get Patients Assigned to Doctor List":"http://192.168.0.111:8000/api/assign/patient-to-doctor",
-                     "To Get Patients Assigned to Doctor By ID":"http://192.168.0.111:8000/api/assign/patient-to-doctor/id",
-                     "To Assigned Patients to Doctor":"http://192.168.0.111:8000/api/assign/patient-to-doctor/",
-                     "To update Patient":"http://192.168.0.111:8000/api/assign/patient-to-doctor/id/",
+                     "To Get Patients Assigned to Doctor List":"http://192.168.0.103:8000/api/assign/patient-to-doctor",
+                     "To Get Patients Assigned to Doctor By ID":"http://192.168.0.103:8000/api/assign/patient-to-doctor/id",
+                     "To Assigned Patients to Doctor":"http://192.168.0.103:8000/api/assign/patient-to-doctor/",
+                     "To update Patient":"http://192.168.0.103:8000/api/assign/patient-to-doctor/id/",
+
+                     
+                     "To Get prescription List":"http://192.168.0.103:8000/api/prescription",
+                     "To Get prescription By ID":"http://192.168.0.103:8000/api/prescription/id",
+                     "To Create prescription":"http://192.168.0.103:8000/api/prescription/",
+                     "To update prescription":"http://192.168.0.103:8000/api/prescription/id/",
+
+                     "To Get appointment List":"http://192.168.0.103:8000/api/appointment",
+                     "To Get appointment By ID":"http://192.168.0.103:8000/api/appointment/id",
+                     "To Create appointment":"http://192.168.0.103:8000/api/appointment/",
+                     "To update appointment":"http://192.168.0.103:8000/api/appointment/id/",
+
+                     
+                     "To Get billing List":"http://192.168.0.103:8000/api/billing",
+                     "To Get billing By ID":"http://192.168.0.103:8000/api/billing/id",
+                     "To Create billing":"http://192.168.0.103:8000/api/billing/",
+                     "To update billing":"http://192.168.0.103:8000/api/billing/id/",
                      })
 
 
@@ -112,7 +133,7 @@ class ServiceViewSet(viewsets.ViewSet):
     serializer = ServiceSerializer(queryset, many=True)
     if(serializer.data):
       return Response({'data':serializer.data, 'count':len(serializer.data)}, status=200)
-    return Response({'detail':'Empty Data'})  
+    return Response(status=status.HTTP_204_NO_CONTENT)
   
   # authentication_classes = [CustomJWTAuthentication]
   def create(self, request):
@@ -158,7 +179,7 @@ class ServiceTypeViewSet(viewsets.ViewSet):
     serializer = ServiceTypeSerializer(queryset, many=True)
     if(serializer.data):
       return Response({'data':serializer.data, 'count':len(serializer.data)}, status=200)
-    return Response({'detail':'Empty Data'})  
+    return Response(status=status.HTTP_204_NO_CONTENT)
   
   def create(self, request):
     serializer = ServiceTypeSerializer(data=request.data)
@@ -300,6 +321,99 @@ class ProductViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin,
         # Add new registered quantity to old quantity on the store
         ProductStore.quantity =  ProductStore.quantity + instance.entry_quantity  
         ProductStore.save()
+
+        # you can return the instance
+        return instance
+   
+class AppointmentViewSet(viewsets.GenericViewSet, mixins.ListModelMixin, 
+                         mixins.RetrieveModelMixin, mixins.UpdateModelMixin,
+                           mixins.CreateModelMixin):
+   
+   queryset = Appointment.objects.all()
+   def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return AppointmentSerializer
+        return AppointmentCreateUpdateSerializer
+
+   def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        # Prepare the custom response
+        response_data = {
+            "count": len(serializer.data),
+            "data": serializer.data
+        }
+        return Response(response_data)
+   
+class PrescriptionViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin,
+                           mixins.ListModelMixin,
+                           mixins.RetrieveModelMixin,
+                           mixins.UpdateModelMixin):
+   
+   queryset = Prescription.objects.all()
+
+   def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return PrescriptionSerializer
+        return PrescriptionCreateUpdateSerializer
+
+   def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        # Prepare the custom response
+        response_data = {
+            "count": len(serializer.data),
+            "data": serializer.data
+        }
+        return Response(response_data)
+   
+   def perform_create(self, serializer):
+        # Save the new Prescription instance
+        instance = serializer.save()
+
+        # Now update the related ProductStore quantity
+        ProductStore = instance.product
+
+        # substract new Prescriped quantity from old quantity on the store
+        ProductStore.quantity =  ProductStore.quantity - instance.product_quantity  
+        ProductStore.save()
+
+        # you can return the instance
+        return instance
+   
+class BillingViewSet(viewsets.GenericViewSet, mixins.CreateModelMixin,
+                      mixins.ListModelMixin,
+                        mixins.RetrieveModelMixin,
+                      mixins.UpdateModelMixin):
+   
+   queryset = Billing.objects.all()
+   def get_serializer_class(self):
+        if self.action in ['list', 'retrieve']:
+            return BillingSerializer
+        return BillingCreateUpdateSerializer
+  #  serializer_class = BillingSerializer
+   
+   def list(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        serializer = self.get_serializer(queryset, many=True)
+        # Prepare the custom response
+        response_data = {
+            "count": len(serializer.data),
+            "data": serializer.data
+        }
+        return Response(response_data)
+   
+   def perform_create(self, serializer):
+        # Save the new Billing instance
+        instance = serializer.save()
+
+        # Now update the related PrescriptionStatus
+        Prescription = instance.prescription
+
+        # update prescription to approved
+        if instance.status == 'completed':
+           Prescription.status =  'Approved'  
+        Prescription.save()
 
         # you can return the instance
         return instance
