@@ -41,9 +41,16 @@ class Patient(models.Model):
     deleted_at = models.DateTimeField(null=True, blank=True, default=None)
 
     def __str__(self):
-        return f"{self.firstName} {self.middleName}. ID:- {self.appointment_date}"
+        return f"{self.first_name} {self.middle_name}. ID:- {self.pID}"
 
 class AssignPatientToDoctor(models.Model):
+    VISITSTATUS_TYPE = [
+        ('Visited', 'Visited'),
+        ('Reject', 'Reject'),
+        ('Pending', 'Pending'),
+    ]
+    # visit
+    # more than one service
     service = models.ForeignKey(ServiceType, on_delete=models.CASCADE, related_name='assign_service')
     patient = models.ForeignKey(Patient, on_delete = models.CASCADE, related_name='patient_assign' )
     doctor = models.ForeignKey(User, on_delete=models.CASCADE, related_name='doctor_assign')
@@ -52,6 +59,15 @@ class AssignPatientToDoctor(models.Model):
     updated_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='assign_update', null=True)
     archive_reason = models.CharField(max_length=255, null=True)
     assigned_at=models.DateTimeField(auto_now_add=True)
+    status = models.CharField(
+        max_length=20,
+        choices=[
+            ('Visited', 'Visited'),
+            ('Reject', 'Reject'),
+            ('Pending', 'Pending'),
+        ],
+        default='Pending'
+    )
     updated_at = models.DateTimeField(auto_now=True)
     deleted_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, related_name='assign_delete')
     deleted_at = models.DateTimeField(null=True, blank=True, default=None)
@@ -75,7 +91,7 @@ class ProductStore(models.Model):
     deleted_at = models.DateTimeField(null=True, blank=True, default=None)
 
     def __str__(self):
-        return f"{self.name}:- from {self.manufacturer}"
+        return f"{self.product_name}:- from {self.manufacturer}"
 
 class Product(models.Model):
     product_name = models.ForeignKey(ProductStore, on_delete=models.CASCADE, related_name='products_title')
@@ -93,6 +109,7 @@ class Appointment(models.Model):
         ('Treatment', 'Treatment'),
         ('Other', 'Other'),
     ]
+    # appointed_by
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE, related_name='appointed_patient')
     dentist = models.ForeignKey(User, on_delete=models.CASCADE, related_name='appointer_dentist')
     appointment_date = models.DateTimeField()

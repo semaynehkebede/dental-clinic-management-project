@@ -12,64 +12,64 @@ from rest_framework import viewsets, mixins
 
 from tdc_api.authentication import CustomJWTAuthentication
 from tdc_api.models import  Appointment, AssignPatientToDoctor, Billing, Patient, Prescription, Product, ProductStore, ServiceType, Services
-from tdc_api.serializers import  AppointmentCreateUpdateSerializer, AppointmentSerializer, AssignPatientToDoctorCreateUpdateSerializer, AssignPatientToDoctorSerializer, BillingSerializer, CreateUserSerializer, PatientSerializer, PrescriptionCreateUpdateSerializer, PrescriptionSerializer, ProductSerializer, ProductStoreSerializer, ServiceSerializer, ServiceTypeSerializer, UserLoginSerializer, UserSerializer
+from tdc_api.serializers import  AppointmentCreateUpdateSerializer, AppointmentSerializer, AssignPatientToDoctorCreateUpdateSerializer, AssignPatientToDoctorSerializer, BillingCreateUpdateSerializer, BillingSerializer, CreateUserSerializer, PatientSerializer, PrescriptionCreateUpdateSerializer, PrescriptionSerializer, ProductSerializer, ProductStoreSerializer, ServiceSerializer, ServiceTypeSerializer, UserLoginSerializer, UserSerializer
 
 # Create your views here.
 @api_view(['GET'])
 def index(request):
     return Response({"success":"Success Api create", 
-                     "login":"http://192.168.0.103:8000/api/auth/login", 
-                     "refresh-token":"http://192.168.0.103:8000/api/auth/auth/refresh", 
+                     "login":"http://192.168.0.102:8000/api/auth/login", 
+                     "refresh-token":"http://192.168.0.102:8000/api/auth/auth/refresh", 
 
-                     "To Get User":"http://192.168.0.103:8000/api/users/get-users",
-                     "To Get User by id(id sent by form data)":"http://192.168.0.103:8000/api/users/get-user",
-                     "To Create User":"http://192.168.0.103:8000/api/users/create-user",
+                     "To Get User":"http://192.168.0.102:8000/api/users/get-users",
+                     "To Get User by id(id sent by form data)":"http://192.168.0.102:8000/api/users/get-user",
+                     "To Create User":"http://192.168.0.102:8000/api/users/create-user",
 
-                     "To Get Service Type List":"http://192.168.0.103:8000/api/service-type",
-                     "To Get Service Type By ID":"http://192.168.0.103:8000/api/service-type/id",
-                     "To Create Service Type":"http://192.168.0.103:8000/api/service-type/",
-                     "To delete service type" : "192.168.0.103:8000/api/service-type/id/",
+                     "To Get Service Type List":"http://192.168.0.102:8000/api/service-type",
+                     "To Get Service Type By ID":"http://192.168.0.102:8000/api/service-type/id",
+                     "To Create Service Type":"http://192.168.0.102:8000/api/service-type/",
+                     "To delete service type" : "192.168.0.102:8000/api/service-type/id/",
 
-                     "To Get Services List":"http://192.168.0.103:8000/api/service",
-                     "To Get Services By ID":"http://192.168.0.103:8000/api/service/id",
-                     "To Create Service":"http://192.168.0.103:8000/api/service/",
+                     "To Get Services List":"http://192.168.0.102:8000/api/service",
+                     "To Get Services By ID":"http://192.168.0.102:8000/api/service/id",
+                     "To Create Service":"http://192.168.0.102:8000/api/service/",
 
-                     "To Get store-item List":"http://192.168.0.103:8000/api/store-item",
-                     "To Get store-item By ID":"http://192.168.0.103:8000/api/store-item/id",
-                     "To Create store-item":"http://192.168.0.103:8000/api/store-item/",
-                     "To Soft Delete store-item. archiveReason, deletedBy, updatedBy value send from form" :"http://192.168.0.103:8000/api/store-item/id/",
+                     "To Get store-item List":"http://192.168.0.102:8000/api/store-item",
+                     "To Get store-item By ID":"http://192.168.0.102:8000/api/store-item/id",
+                     "To Create store-item":"http://192.168.0.102:8000/api/store-item/",
+                     "To Soft Delete store-item. archiveReason, deletedBy, updatedBy value send from form" :"http://192.168.0.102:8000/api/store-item/id/",
                      
-                     "To Get product List":"http://192.168.0.103:8000/api/product",
-                     "To Get product By ID":"http://192.168.0.103:8000/api/product/id",
-                     "To Create product":"http://192.168.0.103:8000/api/product/",
+                     "To Get product List":"http://192.168.0.102:8000/api/product",
+                     "To Get product By ID":"http://192.168.0.102:8000/api/product/id",
+                     "To Create product":"http://192.168.0.102:8000/api/product/",
                      
-                     "To Get Patient List":"http://192.168.0.103:8000/api/patient",
-                     "To Get Patient By ID":"http://192.168.0.103:8000/api/patient/id",
-                     "To Create Patient":"http://192.168.0.103:8000/api/patient/",
-                     "To update Patient":"http://192.168.0.103:8000/api/patient/id/",
-                    #  "To Soft Delete Patient. archiveReason, deletedBy, updatedBy value send from form" :"http://192.168.0.103:8000/api/patient/id/"
+                     "To Get Patient List":"http://192.168.0.102:8000/api/patient",
+                     "To Get Patient By ID":"http://192.168.0.102:8000/api/patient/id",
+                     "To Create Patient":"http://192.168.0.102:8000/api/patient/",
+                     "To update Patient":"http://192.168.0.102:8000/api/patient/id/",
+                    #  "To Soft Delete Patient. archiveReason, deletedBy, updatedBy value send from form" :"http://192.168.0.102:8000/api/patient/id/"
   
-                     "To Get Patients Assigned to Doctor List":"http://192.168.0.103:8000/api/assign/patient-to-doctor",
-                     "To Get Patients Assigned to Doctor By ID":"http://192.168.0.103:8000/api/assign/patient-to-doctor/id",
-                     "To Assigned Patients to Doctor":"http://192.168.0.103:8000/api/assign/patient-to-doctor/",
-                     "To update Patient":"http://192.168.0.103:8000/api/assign/patient-to-doctor/id/",
+                     "To Get Patients Assigned to Doctor List":"http://192.168.0.102:8000/api/assign/patient-to-doctor",
+                     "To Get Patients Assigned to Doctor By ID":"http://192.168.0.102:8000/api/assign/patient-to-doctor/id",
+                     "To Assigned Patients to Doctor":"http://192.168.0.102:8000/api/assign/patient-to-doctor/",
+                     "To update Patient":"http://192.168.0.102:8000/api/assign/patient-to-doctor/id/",
 
                      
-                     "To Get prescription List":"http://192.168.0.103:8000/api/prescription",
-                     "To Get prescription By ID":"http://192.168.0.103:8000/api/prescription/id",
-                     "To Create prescription":"http://192.168.0.103:8000/api/prescription/",
-                     "To update prescription":"http://192.168.0.103:8000/api/prescription/id/",
+                     "To Get prescription List":"http://192.168.0.102:8000/api/prescription",
+                     "To Get prescription By ID":"http://192.168.0.102:8000/api/prescription/id",
+                     "To Create prescription":"http://192.168.0.102:8000/api/prescription/",
+                     "To update prescription":"http://192.168.0.102:8000/api/prescription/id/",
 
-                     "To Get appointment List":"http://192.168.0.103:8000/api/appointment",
-                     "To Get appointment By ID":"http://192.168.0.103:8000/api/appointment/id",
-                     "To Create appointment":"http://192.168.0.103:8000/api/appointment/",
-                     "To update appointment":"http://192.168.0.103:8000/api/appointment/id/",
+                     "To Get appointment List":"http://192.168.0.102:8000/api/appointment",
+                     "To Get appointment By ID":"http://192.168.0.102:8000/api/appointment/id",
+                     "To Create appointment":"http://192.168.0.102:8000/api/appointment/",
+                     "To update appointment":"http://192.168.0.102:8000/api/appointment/id/",
 
                      
-                     "To Get billing List":"http://192.168.0.103:8000/api/billing",
-                     "To Get billing By ID":"http://192.168.0.103:8000/api/billing/id",
-                     "To Create billing":"http://192.168.0.103:8000/api/billing/",
-                     "To update billing":"http://192.168.0.103:8000/api/billing/id/",
+                     "To Get billing List":"http://192.168.0.102:8000/api/billing",
+                     "To Get billing By ID":"http://192.168.0.102:8000/api/billing/id",
+                     "To Create billing":"http://192.168.0.102:8000/api/billing/",
+                     "To update billing":"http://192.168.0.102:8000/api/billing/id/",
                      })
 
 
@@ -221,7 +221,9 @@ class PatientViewSet(viewsets.GenericViewSet,
                      mixins.ListModelMixin,
                      mixins.CreateModelMixin,
                      mixins.RetrieveModelMixin,
-                     mixins.UpdateModelMixin):
+                     mixins.UpdateModelMixin,
+                     mixins.DestroyModelMixin
+                     ):
     queryset = Patient.objects.all()
     serializer_class = PatientSerializer
 
@@ -229,11 +231,11 @@ class PatientViewSet(viewsets.GenericViewSet,
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         # Prepare the custom response
-        response_data = {
-            "count": len(serializer.data),
-            "data": serializer.data
-        }
-        return Response(response_data)
+        # response_data = {
+        #     "count": len(serializer.data),
+        #     "data": serializer.data
+        # }
+        return Response(serializer.data)
     
     def update(self, request, *args, **kwargs):
         # Partially update an existing object.
@@ -260,11 +262,11 @@ class AssignPatientToDoctorViewSet(viewsets.GenericViewSet,
         queryset = self.get_queryset()
         serializer = self.get_serializer(queryset, many=True)
         # Prepare the custom response
-        response_data = {
-            "count": len(serializer.data),
-            "data": serializer.data
-        }
-        return Response(response_data)
+        # response_data = {
+        #     "count": len(serializer.data),
+        #     "data": serializer.data
+        # }
+        return Response(serializer.data)
     
     def update(self, request, *args, **kwargs):
         # Partially update an existing object.

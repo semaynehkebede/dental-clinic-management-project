@@ -63,6 +63,13 @@ class ServiceTypeSerializer(serializers.ModelSerializer):
 #         return value
     
 class PatientSerializer(serializers.ModelSerializer):
+   pID = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+   occupation = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+   email = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+   previous_medical_condition = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+   sergical_history = serializers.CharField(required=False, allow_blank=True, allow_null=True)
+
+
    class Meta:
       model = Patient
       fields = '__all__'

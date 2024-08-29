@@ -12,6 +12,7 @@ class CustomJWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
 
         # Get the JWT token from the request headers
+        # auth_header = request.headers.get('Authorization')
         # header = request.get_authorization_header(request).decode('utf-8')
         header = request.META.get('HTTP_AUTHORIZATION')
         # if not header:
